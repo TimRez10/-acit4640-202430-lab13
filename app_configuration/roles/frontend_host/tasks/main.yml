@@ -1,0 +1,72 @@
+---
+- name: Install required packages for Caddy
+  ansible.builtin.apt:
+    name: [curl, debian-keyring, debian-archive-keyring, apt-transport-https]
+    state: present
+    update_cache: true
+  become: true
+
+- name: Add Caddy GPG key
+  ansible.builtin.apt_key:
+    url: "https://dl.cloudsmith.io/public/caddy/stable/gpg.key"
+    state: present
+  become: true
+
+- name: Add Caddy repository
+  ansible.builtin.apt_repository:
+    repo: "deb https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main"
+    state: present
+  become: true
+
+- name: Install Caddy
+  ansible.builtin.apt:
+    name: caddy
+    state: present
+    update_cache: true
+  become: true
+
+- name: Create /var/www/html directory
+  ansible.builtin.file:
+    path: /var/www/html
+    state: directory
+    owner: caddy
+    group: caddy
+    mode: '0755'
+  become: true
+
+- name: Copy index.html to /var/www/html
+  ansible.builtin.copy:
+    src: index.html
+    dest: /var/www/html/index.html
+    owner: caddy
+    group: caddy
+    mode: '0644'
+  become: true
+
+- name: Copy client.js to /var/www/html
+  ansible.builtin.copy:
+    src: client.js
+    dest: /var/www/html/client.js
+    owner: caddy
+    group: caddy
+    mode: '0644'
+  become: true
+
+- name: Configure web client using config.js.j2
+  ansible.builtin.template:
+    src: config.js.j2
+    dest: /var/www/html/config.js
+    owner: caddy
+    group: caddy
+    mode: '0644'
+  become: true
+
+- name: Configure Caddy using Caddyfile.j2
+  ansible.builtin.template:
+    src: Caddyfile.j2
+    dest: /etc/caddy/Caddyfile
+    owner: root
+    group: caddy
+    mode: '0644'
+  become: true
+  notify: Restart Caddy

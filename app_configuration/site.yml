@@ -1,0 +1,42 @@
+---
+- name: Bring up hosts
+  hosts: project_lab13
+  gather_facts: false
+  tasks:
+    - name: Wait for hosts to be available
+      # When accessing hosts newly created by terraform they may not be instantly available
+      ansible.builtin.wait_for_connection:
+        delay: 1
+        sleep: 10
+        timeout: 180
+  tags:
+    - initial
+
+- name: Common setup
+  hosts: project_lab13
+  tasks:
+    - name: Run ec2_host_base role
+      ansible.builtin.include_role:
+        name: ec2_host_base
+  tags:
+    - initial
+
+# Create role frontend_host
+- name: Setup frontend
+  hosts: role_web:&project_lab13
+  tasks:
+    - name: Run frontend_host role
+      ansible.builtin.include_role:
+        name: frontend_host
+  tags:
+    - frontend
+
+# Call the backend_host role
+- name: Setup frontend
+  hosts: role_backend:&project_lab13
+  tasks:
+    - name: Run backend_host role
+      ansible.builtin.include_role:
+        name: backend_host
+  tags:
+    - backend
