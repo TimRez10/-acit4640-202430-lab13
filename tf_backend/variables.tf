@@ -7,5 +7,3 @@ variable "dynamodb_name" {
     description = "DynamoDB table name"
     type        = string
 }
-
-data "aws_region" "aws_current_region" {}
