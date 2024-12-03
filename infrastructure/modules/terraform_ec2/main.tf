@@ -14,7 +14,7 @@ resource "aws_instance" "main" {
   }
 }
 
-resource "aws_route53_record" "instances" {
+resource "aws_route53_record" "main" {
   for_each = var.instances
 
   zone_id = var.zone_id

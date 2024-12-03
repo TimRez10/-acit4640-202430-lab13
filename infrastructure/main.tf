@@ -37,6 +37,7 @@ module "ec2_instances" {
   ami               = "ami-04dd23e62ed049936"
   key_name          = module.ssh_key.ssh_key_name
   zone_id      = module.dns.zone_id
+  domain_name = "${var.project_name}.internal"
 
   instances = {
     (var.public_i_name) = {

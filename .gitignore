@@ -3,3 +3,6 @@
 .terraform.lock.hcl
 *terraform.tfstate*
 backend_config.tf
+connect_vars.sh
+acit_4640_lab_13.pem
+acit_4640_lab_13.pub
